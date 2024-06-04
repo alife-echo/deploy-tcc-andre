@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Mapa</title>
+
+    <!-- CSS do Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- CSS do Leaflet.heat -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.heat/dist/leaflet-heat.css" />
+    <!-- CSS do Leaflet.markercluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <!-- Folha de Estilos personalizada -->
+    <link rel="stylesheet" href="styles/index.css">
+
+</head>
+
+<body>
+ 
+    <div class="divisor">
+        <div class="menu-button">
+            <button id="toggleMenu" onclick="toggleQd1()">Menu</button>
+        </div>
+    
+        <div class="qd1">
+            <div class="cabeçalho">
+                <div class="divImagem"><img class="logo" src="logoPaginaMapa.svg" alt=""></div>
+                <div class="textoInicial">
+                    <h1 id="pageTitle">Mapa Interativo</h1>
+                    <p id="pageDescription">Faça sua análise de maneira rapida e eficaz</p>
+                </div>
+                <div class="language-buttons">
+                    <button id="switchToEnglish" onclick="switchLanguage('en')"><img class="EuaImg"  src="Eua.jpg" alt="" ></button>
+                    <button id="switchToPortuguese" onclick="switchLanguage('pt')"><img class="BrazilImg"  src="Brazil.png" alt="" ></button>
+                </div>
+            </div>
+            <div class="porQuantidade">
+                <label for="" class="subtitulos" id="quantidades">Qual a quantidade:</label>
+                <input type="number" id="quantity" name="quantity" placeholder="" min="1">
+            </div>
+            <div class="retanguloFiltro">
+                <div class="mesTipo">
+                    <div class="mes">
+                        <label for="" class="subtitulos" id="meses">Selecione o mês:</label>
+                        <select name="month" id="month">
+                            <option value=""></option>
+                            <option value="all" id="allmeses">Todos os meses</option>
+                            <option value="01" id="mes1">Janeiro</option>
+                            <option value="02" id="mes2">Fevereiro</option>
+                            <option value="03" id="mes3">Março</option>
+                            <option value="04" id="mes4">Abril</option>
+                            <option value="05" id="mes5">Maio</option>
+                            <option value="06" id="mes6">Junho</option>
+                            <option value="07" id="mes7">julho</option>
+                            <option value="08" id="mes8">Agosto</option>
+                            <option value="09" id="mes9">Setembro</option>
+                            <option value="10" id="mes10">Outubro</option>
+                            <option value="11" id="mes11">Novembro</option>
+                            <option value="12" id="mes12">Dezembro</option>
+                            <!-- Adicione os demais meses aqui -->
+                        </select>
+                    </div>
+                </div>
+                <div class="tipo">
+                    <label for="" class="subtitulos" id="tipos">Selecione o tipo do raio:</label>
+                    <select name="type" id="type">
+                        <option value=""></option>
+                        <option value="1" id="tipos1">Intranuvem</option>
+                        <option value="0" id="tipos2">Nuvem-Solo</option>
+                        <!-- Adicione os demais tipos aqui -->
+                    </select>
+                </div>
+
+                <div class="porData">
+                    <div class="inicial">
+                        <label for="startDate" id="periodos1">Data e hora inicial:</label>
+                        <input type="datetime-local" id="startDate" name="startDate">
+                    </div>
+                    <div class="final">
+                        <label for="endDate" id="periodos2">Data e hora final:</label>
+                        <input type="datetime-local" id="endDate" name="endDate">
+                    </div>
+                </div>
+            </div>
+            <div class="inserir">
+                <label for="" class="subtitulos" id="inserir1">Upload de arquivo:</label>
+                <form action="/api/upload" method="post" enctype="multipart/form-data" class="inserir2">
+                    <input type="file" name="jsonFile" class="bt3">
+                    <input type="submit" value="Enviar Arquivo JSON" class="bt4" id="arquivos">
+                    <img class="enviar" src="enviar.svg" alt="" style="position: absolute;">
+                </form>
+            </div>
+            <div class="naTela">
+                <p id="resultCount"></p> <!--quantidade de pontos  -->
+                <p id="maxCount"></p> <!--  quantidade maxima de pontos-->
+            </div>
+            <div class="botoes">
+                <div class="bt1">
+                    <button id="btnFilter">Filtrar</button>
+                </div>
+                <div class="bt1">
+                    <button id="btnReset">Limpar Filtros</button>
+                </div>
+            </div>
+
+            <div class="divQdr">
+                <button id="btnCharts"><img src="grafico.svg">Ver Gráficos</></button>
+            </div>
+        </div>
+        <div class="qd2">
+            <div class="mapa">
+                <div id="map"></div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Função para alternar a visibilidade de qd1 em telas menores
+        function toggleQd1() {
+            const qd1 = document.querySelector('.qd1');
+            qd1.classList.toggle('hide-qd1');
+        }
+    
+        // Verificar o tamanho da tela quando a página carregar e redimensionar
+        window.addEventListener('load', function() {
+            checkScreenSize();
+        });
+        window.addEventListener('resize', function() {
+            checkScreenSize();
+        });
+    
+        // Função para verificar e aplicar a classe para ocultar qd1 em telas menores
+        function checkScreenSize() {
+            const qd1 = document.querySelector('.qd1');
+            const menuButton = document.querySelector('.menu-button');
+    
+            if (window.innerWidth <= 1000) {
+                qd1.classList.add('hide-qd1');
+                menuButton.style.display = 'block'; // Mostrar o botão
+            } else {
+                qd1.classList.remove('hide-qd1');
+                menuButton.style.display = 'none'; // Ocultar o botão
+            }
+        }
+    </script>
+    
+    
+
+    <!-- JavaScript do Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- JavaScript do Leaflet.heat -->
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    <!-- JavaScript do Leaflet.markercluster -->
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+
+    <script>
+        // Adicione esta parte de código para lidar com o upload do arquivo JSON
+        document.getElementById('uploadButton').addEventListener('click', function () {
+            const fileInput = document.getElementById('jsonFileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Use a classe FormData para enviar o arquivo JSON para o servidor
+                const formData = new FormData();
+                formData.append('jsonFile', file);
+
+                // Faça uma solicitação POST para a rota que manipulará o upload do arquivo
+                fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('Erro ao enviar o arquivo JSON');
+                        }
+                        return response.json();
+                    })
+                    .then(function (result) {
+                        // O arquivo JSON foi enviado com sucesso, você pode tratar a resposta aqui
+                        console.log('Arquivo JSON enviado com sucesso:', result);
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }
+        });
+    </script>
+    <script>
+        var heatLayer;
+        document.getElementById('btnCharts').addEventListener('click', function () {
+            window.location.href = 'graficos.html';
+        });
+
+
+
+
+        function getMonthFromTimeUTC(timeUTC) {
+            // Converter a data UTC para um objeto Date
+            var date = new Date(timeUTC);
+
+            // Obter o mês (valor de 0 a 11) a partir do objeto Date
+            var month = date.getUTCMonth() + 1; // Adicionamos 1, pois os meses são representados de 0 a 11
+
+            // Retornar o mês formatado com dois dígitos (por exemplo, 01, 02, ..., 12)
+            return month.toString().padStart(2, '0');
+        }
+
+        function initMap(points) {
+            // Criação do mapa
+            var map = L.map('map').setView([-5.3814600, -49.1323200], 4);
+            
+            // Adicionar camada do mapa base
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Criar agrupamento de marcadores
+            var markersCluster = L.markerClusterGroup(); // Utiliza o Leaflet.markercluster
+
+            // Array para armazenar as coordenadas dos pontos de calor
+            var heatPoints = [];
+
+            // Variável global para armazenar os pontos filtrados
+            var filteredPoints = [];
+
+            // Função para adicionar um marcador no mapa
+            function addMarker(point) {
+                console.log('Coordenadas do ponto:', point.latitude, point.longitude);
+
+                var markerIcon;
+
+                // Definir ícone personalizado com base no tipo de ponto
+                if (point.type === '1') {
+                    markerIcon = L.icon({
+                        iconUrl: 'pontoAmarelo.png',
+                        iconSize: [33, 45],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    });
+                } else if (point.type === '0') {
+                    markerIcon = L.icon({
+                        iconUrl: 'pontoAzul.png',
+                        iconSize: [50, 45],
+                        iconAnchor: [20, 41],
+                        popupAnchor: [1, -34]
+                    });
+                } else if (point.type === '40') {
+                    markerIcon = L.icon({
+                        iconUrl: 'pontoRed.png',
+                        iconSize: [27, 45],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    });
+                } else {
+                    markerIcon = L.icon({
+                        iconUrl: 'default-marker-icon.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    });
+                }
+
+                var marker = L.marker([point.latitude, point.longitude], { icon: markerIcon });
+                marker.bindPopup(`Raio do tipo: ${point.type}`);
+                markersCluster.addLayer(marker);
+            }
+
+            // Função para remover todos os marcadores do mapa
+            function removeMarkers() {
+                markersCluster.clearLayers();
+            }
+
+
+            function updateMarkers() {
+                var selectedMonth = document.getElementById('month').value;
+                var selectedQuantity = parseInt(document.getElementById('quantity').value);
+                var selectedType = document.getElementById('type').value;
+                var startDate = document.getElementById('startDate').value;
+                var endDate = document.getElementById('endDate').value;
+
+                // Remover todos os marcadores do mapa antes de aplicar um novo filtro
+                removeMarkers();
+
+                if (heatLayer) {
+                    map.removeLayer(heatLayer);
+                }
+                // Limpar as coordenadas dos pontos de calor
+                heatPoints = [];
+
+                // Filtrar os pontos com base nos filtros selecionados
+                filteredPoints = points.filter(function (point) {
+                    // Filtro pelo mês
+                    if (selectedMonth !== 'all' && new Date(point.time_utc).getMonth() + 1 !== parseInt(selectedMonth)) {
+                        return false;
+                    }
+
+                    // Filtro pela data
+                    if (startDate !== '' && endDate !== '') {
+                        var pointDate = new Date(point.time_utc).getTime();
+                        var startDateTimestamp = new Date(startDate).getTime();
+                        var endDateTimestamp = new Date(endDate).getTime();
+
+                        // Verificar se a data do ponto está entre a data inicial e final selecionadas
+                        if (pointDate < startDateTimestamp || pointDate > endDateTimestamp) {
+                            return false;
+                        }
+                    }
+
+                    // Filtro pelo tipo
+                    if (selectedType === '0' || selectedType === '40') {
+                        // Verificar se o ponto é do tipo "0" ou "40"
+                        return point.type === '0' || point.type === '40';
+                    } else if (selectedType !== '' && point.type !== selectedType) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                // Limitar a quantidade de pontos de acordo com o filtro de quantidade
+                if (!isNaN(selectedQuantity) && selectedQuantity >= 1 && filteredPoints.length > selectedQuantity) {
+                    filteredPoints = filteredPoints.slice(0, selectedQuantity);
+                }
+
+                // Adicionar os marcadores filtrados no agrupamento de marcadores
+                filteredPoints.forEach(function (point) {
+                    addMarker(point);
+                    heatPoints.push([point.latitude, point.longitude]);
+                });
+
+                // Adicionar o agrupamento de marcadores ao mapa
+                map.addLayer(markersCluster);
+
+                // Criar a camada de mapa de calor com base nos pontos filtrados
+                heatLayer = L.heatLayer(heatPoints, { radius: 25, willReadFrequently: true }).addTo(map);
+
+                // Atualizar a contagem de pontos retornados
+                document.getElementById('resultCount').textContent = 'Quantidade de pontos retornados: ' + filteredPoints.length;
+            }
+
+
+            // Limpar os filtros e mostrar todos os marcadores quando o botão "Limpar Filtros" for clicado
+            document.getElementById('btnReset').addEventListener('click', function () {
+                document.getElementById('month').value = '';
+                document.getElementById('quantity').value = '';
+                document.getElementById('type').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                updateMarkers();
+            });
+
+            // Atualizar os marcadores iniciais com base nos filtros selecionados
+            updateMarkers();
+
+            // Evento de clique no botão de filtro
+            document.getElementById('btnFilter').addEventListener('click', updateMarkers);
+
+            // Exibir a quantidade máxima de pontos no mapa
+            console.log('Quantidade de pontos retornados:', filteredPoints.length);
+            document.getElementById('maxCount').textContent = 'Quantidade máxima de pontos no mapa: ' + points.length;
+        }
+        function fetchPointsAndInitMap() {
+            fetch('/api') // Substitua pela URL correta da sua API
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Erro ao obter os dados da API');
+                    }
+                    return response.json();
+                })
+                .then(function (points) {
+                    initMap(points);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        // Chamar a função ao carregar a página
+        fetchPointsAndInitMap();
+
+    </script>
+
+
+<script>
+    function switchLanguage(language) {
+           if (language === 'en') {
+               // Definir texto em inglês
+               document.getElementById('pageTitle').textContent = 'Interactive Map';
+               document.getElementById('pageDescription').textContent = 'Perform your analysis quickly and effectively';
+               document.getElementById('quantidades').textContent='How many:';
+               document.getElementById('meses').textContent='Select the month:';
+               document.getElementById('allmeses').textContent='every month';
+
+
+                               
+               // ~meses~
+
+               document.getElementById('mes1').textContent='January';
+               document.getElementById('mes2').textContent='February';
+               document.getElementById('mes3').textContent='March';
+               document.getElementById('mes4').textContent='April';
+               document.getElementById('mes5').textContent='May';
+               document.getElementById('mes6').textContent='June';
+               document.getElementById('mes7').textContent='July';
+               document.getElementById('mes8').textContent='August';
+               document.getElementById('mes9').textContent='September';
+               document.getElementById('mes10').textContent='October';
+               document.getElementById('mes11').textContent='November';
+               document.getElementById('mes12').textContent='December';
+  
+
+
+               document.getElementById('tipos').textContent='Select the type of radius:';
+               document.getElementById('tipos1').textContent='Intracloud';
+               document.getElementById('tipos2').textContent='cloud-to-ground';
+               document.getElementById('periodos1').textContent='Start date and time:';
+               document.getElementById('periodos2').textContent='End date and time:';
+               document.getElementById('inserir1').textContent='File Upload:';
+               document.getElementById('arquivos').value='Send JSON File';
+
+              
+               document.getElementById('resultCount').textContent = 'Number of points returned:';
+            //    document.getElementById('maxCount').textContent = 'Maximum number of points on the map:' + points.length;
+               document.getElementById('btnFilter').textContent='Run filter';
+               document.getElementById('btnReset').textContent='Clear Filters';
+               document.getElementById('btnCharts').textContent='See Charts';
+
+               // document.getElementById('').textContent='';
+               // document.getElementById('').textContent='';
+               // document.getElementById('').textContent='';
+               // document.getElementById('').textContent='';
+
+               document.getElementById('switchToEnglish').style.display = 'none';
+               document.getElementById('switchToPortuguese').style.display = 'block';
+           } else if (language === 'pt') {
+               // Definir texto em português
+               document.getElementById('pageTitle').textContent = 'Mapa Interativo';
+               document.getElementById('pageDescription').textContent = 'Faça sua análise de maneira rápida e eficaz';
+               document.getElementById('quantidades').textContent='Qual a quantidade:';
+               document.getElementById('meses').textContent='Selecione o mês:';
+               document.getElementById('allmeses').textContent='Todos os meses';
+            // ~meses~
+
+            document.getElementById('mes1').textContent='Janeiro';
+               document.getElementById('mes2').textContent='Fervereiro';
+               document.getElementById('mes3').textContent='Março';
+               document.getElementById('mes4').textContent='Abril';
+               document.getElementById('mes5').textContent='Maio';
+               document.getElementById('mes6').textContent='Junho';
+               document.getElementById('mes7').textContent='Julho';
+               document.getElementById('mes8').textContent='Agosto';
+               document.getElementById('mes9').textContent='Setembro';
+               document.getElementById('mes10').textContent='Outubro';
+               document.getElementById('mes11').textContent='Novembro';
+               document.getElementById('mes12').textContent='Dezembro';
+     
+
+               document.getElementById('tipos').textContent='Selecione o tipo do raio:';
+               document.getElementById('tipos1').textContent='Intranuvem';
+               document.getElementById('tipos2').textContent='Nuvem-solo';
+               document.getElementById('periodos1').textContent='Data e hora inicial:';
+               document.getElementById('periodos2').textContent='Data e hora final:';
+               document.getElementById('inserir1').textContent='Upload de arquivo:';
+               document.getElementById('arquivos').value='Enviar Arquivo JSON';
+
+               document.getElementById('resultCount').textContent = 'Quantidade de pontos retornados:';
+            //    document.getElementById('maxCount').textContent = 'Quantidade máxima de pontos no mapa:' + points.length;
+               
+
+               document.getElementById('btnFilter').textContent='Filtrar';
+               document.getElementById('btnReset').textContent='Limpar Filtros';
+
+               document.getElementById('btnCharts').textContent='Ver Gráficos';
+               
+           
+
+
+               document.getElementById('switchToEnglish').style.display = 'block';
+               document.getElementById('switchToPortuguese').style.display = 'none';
+           }
+       }
+</script>
+
+</body>
+
+</html>

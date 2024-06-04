@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Gráficos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+      width: 100%;
+
+    }
+
+    .cabeçalho {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+      max-width: 100%;
+      width: 100%;
+      text-align: justify;
+
+    }
+
+
+    #btnMap {
+      max-width: 100%;
+      width: 90%;
+      height: 30px;
+      font-size: 12.4px;
+      margin: 5px;
+      font-weight: 700;
+      outline: none;
+      border: none;
+
+      border-radius: 5px;
+      cursor: pointer;
+      background: #03A4FF;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      align-items: center;
+    }
+
+
+    label {
+      padding: 5px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    select {
+      margin: 3px;
+      padding: 5px;
+      background: #F1F9FC;
+      font-weight: 600;
+      width: 57%;
+    }
+
+    .quadrado {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-content: center;
+      max-width: 100%;
+      width: 100%;
+      height: 43rem;
+    }
+
+    .chart-container {
+      margin-bottom: 20px;
+      max-width: 90%;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+      margin-left: 2rem;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="styles/grafico.css">
+</head>
+
+<body>
+  <div class="divisor">
+    <div class="qd1">
+      <div class="cabeçalho">
+        <div class="divImagem"><img class="logo" src="logo.svg" alt=""></div>
+        <div class="textoInicial">
+          <h1 id="pageTitle">Gráficos Dinâminos</h1>
+          <p id="pageDescription">Faça sua análise de maneira rapida e eficaz</p>
+        </div>
+        <div class="language-buttons">
+          <button id="switchToEnglish" onclick="switchLanguage('en')"><img class="EuaImg"  src="Eua.jpg" alt="" ></button>
+          <button id="switchToPortuguese" onclick="switchLanguage('pt')"><img class="BrazilImg"  src="Brazil.png" alt="" ></button>
+      </div>
+      </div>
+      <div class="selecionador">
+        <label for="monthSelect" id="meses">Selecione o mês:</label>
+        <select id="monthSelect">
+          <option value="" id="allmeses">Todos os meses</option>
+          <option value="01" id="mes1">Janeiro</option>
+          <option value="02" id="mes2">Fevereiro</option>
+          <option value="03" id="mes3">Março</option>
+          <option value="04" id="mes4">Abril</option>
+          <option value="05" id="mes5">Maio</option>
+          <option value="06" id="mes6">Junho</option>
+          <option value="07" id="mes7">Julho</option>
+          <option value="08" id="mes8">Agosto</option>
+          <option value="09" id="mes9">Setembro</option>
+          <option value="10" id="mes10">Outubro</option>
+          <option value="11" id="mes11">Novembro</option>
+          <option value="12" id="mes12">Dezembro</option>
+        </select>
+      </div>
+      <div id="infoRaio" class="info-raio">
+        <div>
+          <label class="informaçoes" id="tipos">Tipo de Raio:</label><span id="tipoRaio"></span><br>
+          <label class="informaçoes" id="quantidades">Quantidade:</label><span id="quantidadeRaio"></span>
+        </div>
+        <div>
+          <label class="informaçoes" id="tipos2">Tipo de Raio:</label><span id="tipoRaio2"></span><br>
+          <label class="informaçoes" id="quantidades2">Quantidade:</label><span id="quantidadeRaio2"></span>
+        </div>
+      </div>
+      <div class="divQdr">
+        <button id="btnMap"><img src="clarity_map-line.svg" alt="">Voltar para o Mapa</a></button>
+      </div>
+    </div>
+    <div class="qd2">
+      <div class="quadrado">
+        <div id="chartContainer"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    //  <button id="btnCharts"><img src="grafico.svg">Ver Gráficos</></button>
+    var heatLayer2;
+    document.getElementById('btnMap').addEventListener('click', function () {
+      window.location.href = 'mapa.html';
+    });
+
+  </script>
+
+
+  <script>
+    let chartData = {}; // Variável global para armazenar os dados do gráfico
+
+    function loadChartData() {
+      fetch('/api/graficos')
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Erro ao obter os dados da API');
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          data.forEach(item => {
+            const monthNumber = new Date(item.time_utc).getMonth() + 1;
+            const month = monthNumber.toString().padStart(2, '0'); // Formato de dois dígitos, por exemplo, '01', '02', ..., '12'
+            const type = item.type;
+
+            if (!chartData[month]) {
+              chartData[month] = {};
+            }
+
+            if (!chartData[month][type]) {
+              chartData[month][type] = 0;
+            }
+
+            chartData[month][type]++;
+          });
+
+          updateChartByMonth(''); // Mostrar o gráfico inicialmente com todos os meses
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+
+    function getDescription(types, quantities) {
+      let description = '';
+
+      for (let i = 0; i < types.length; i++) {
+        const type = types[i];
+        const quantity = quantities[i];
+
+        description += `Tipo ${type}: Quantidade ${quantity}<br>`;
+      }
+
+      return description;
+    }
+
+    function getMonthName(monthNumber) {
+      const monthNames = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+      ];
+      return monthNames[monthNumber - 1];
+    }
+
+    function updateChartByMonth(selectedMonth) {
+      const chartContainer = document.getElementById('chartContainer');
+      const tipoRaio = document.getElementById('tipoRaio'); // Elemento de tipo de raio
+      const tipoRaio2 = document.getElementById('tipoRaio2');
+      const quantidadeRaio = document.getElementById('quantidadeRaio'); // Elemento de quantidade de raio
+      const quantidadeRaio2 = document.getElementById('quantidadeRaio2'); // Elemento de quantidade de raio
+
+      // Limpar o conteúdo anterior do gráfico
+      chartContainer.innerHTML = '';
+
+      const orderedMonths = Object.keys(chartData).sort((a, b) => parseInt(a) - parseInt(b));
+
+      const colors = generateRandomColors(orderedMonths.length);
+
+      // Inicializar arrays para dados do gráfico
+      const labels = ['IntraNuvem', 'Nuvem-Solo'];
+      const datasets = [];
+
+      // Adicione um bloco para calcular as quantidades totais quando "Todos os meses" for selecionado
+      let totalIntraNuvem = 0;
+      let totalNuvemSolo = 0;
+      if (selectedMonth === '') {
+        for (const month of orderedMonths) {
+          Object.keys(chartData[month]).forEach(type => {
+            const quantity = chartData[month][type];
+            if (type === '1') {
+              totalIntraNuvem += quantity;
+            } else if (type === '0' || type === '40') {
+              totalNuvemSolo += quantity;
+            }
+          });
+        }
+      }
+      for (const [index, month] of orderedMonths.entries()) {
+        // Verificar se o mês selecionado corresponde ao mês atual no loop ou se é "todos os meses"
+        if (selectedMonth === '' || selectedMonth === month) {
+          const monthName = getMonthName(parseInt(month));
+
+          // Inicializar contadores para os tipos de raio
+          let intranuvemCount = 0;
+          let nuvemSoloCount = 0;
+
+          // Iterar pelos tipos e quantidades e agrupar os valores para IntraNuvem e Nuvem-Solo
+          Object.keys(chartData[month]).forEach(type => {
+            const quantity = chartData[month][type];
+            if (type === '1') {
+              intranuvemCount += quantity;
+            } else if (type === '0' || type === '40') {
+              nuvemSoloCount += quantity;
+            }
+          });
+          // Adicionar dataset para o mês atual com a sua cor correspondente
+          datasets.push({
+            label: monthName,
+            data: [intranuvemCount, nuvemSoloCount],
+            backgroundColor: colors[index],
+            borderColor: colors[index],
+            borderWidth: 3
+          });
+          // Atualizar o conteúdo da div 'infoRaio'
+          if (selectedMonth === '') {
+            tipoRaio.textContent = 'IntraNuvem (Total)';
+            quantidadeRaio.textContent = totalIntraNuvem;
+            tipoRaio2.textContent = 'Nuvem-Solo (Total)';
+            quantidadeRaio2.textContent = totalNuvemSolo;
+          } else {
+            tipoRaio.textContent = 'IntraNuvem'; // Você pode personalizar isso com base no tipo de raio atual
+            quantidadeRaio.textContent = intranuvemCount; // Você pode personalizar isso com base na quantidade atual
+            tipoRaio2.textContent = 'Nuvem-Solo'; // Você pode personalizar isso com base no tipo de raio atual
+            quantidadeRaio2.textContent = nuvemSoloCount; // Você pode personalizar isso com base na quantidade atual
+          }
+        }
+      }
+      // Criar o gráfico empilhado
+      const chartDiv = document.createElement('div');
+      chartDiv.classList.add('chart-container');
+      chartContainer.appendChild(chartDiv);
+
+      const canvas = document.createElement('canvas');
+      chartDiv.appendChild(canvas);
+
+      new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              stacked: true // Empilhar as barras no eixo x
+            },
+            y: {
+              stacked: true // Empilhar as barras no eixo y
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            }
+          },
+          // Ajuste a largura das barras aqui
+          barThickness: 137, // Ajuste esse valor para definir a largura das barras
+        }
+      });
+    }
+    // Função para gerar cores aleatórias
+    function generateRandomColors(count) {
+      const colors = [];
+      for (let i = 0; i < count; i++) {
+        const color = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.5)`;
+        colors.push(color);
+      }
+      return colors;
+    }
+
+    // Restante do seu código permanece o mesmo
+
+    // Adicione um evento de mudança no seletor de meses
+    document.getElementById('monthSelect').addEventListener('change', function () {
+      const selectedMonth = this.value;
+      updateChartByMonth(selectedMonth);
+    });
+
+    window.onload = function () {
+      loadChartData();
+    };
+  </script>
+
+
+  <script>
+    function switchLanguage(language) {
+      if (language === 'en') {
+        // Definir texto em inglês
+        document.getElementById('pageTitle').textContent = 'Dynamic Charts';
+        document.getElementById('pageDescription').textContent = 'Perform your analysis quickly and effectively';
+        document.getElementById('quantidades').textContent = 'Amount:';
+        document.getElementById('quantidades2').textContent = 'Amount:';
+        document.getElementById('meses').textContent = 'Select the month:';
+        document.getElementById('allmeses').textContent = 'Every month';
+        // ~meses~
+
+        document.getElementById('mes1').textContent = 'January';
+        document.getElementById('mes2').textContent = 'February';
+        document.getElementById('mes3').textContent = 'March';
+        document.getElementById('mes4').textContent = 'April';
+        document.getElementById('mes5').textContent = 'May';
+        document.getElementById('mes6').textContent = 'June';
+        document.getElementById('mes7').textContent = 'July';
+        document.getElementById('mes8').textContent = 'August';
+        document.getElementById('mes9').textContent = 'September';
+        document.getElementById('mes10').textContent = 'October';
+        document.getElementById('mes11').textContent = 'November';
+        document.getElementById('mes12').textContent = 'December';
+
+
+
+        document.getElementById('tipos').textContent = 'Type of radius:';
+        document.getElementById('tipos2').textContent = 'Type of radius:';
+
+        document.getElementById('tipoRaio').textContent = 'IntraCloud (Total)';
+        document.getElementById('tipoRaio2').textContent = 'Cloud-Ground (Total)';
+
+
+        document.getElementById('btnMap').textContent = 'Return to Map';
+
+        // document.getElementById('').textContent='';
+        // document.getElementById('').textContent='';
+        // document.getElementById('').textContent='';
+        // document.getElementById('').textContent='';
+
+        document.getElementById('switchToEnglish').style.display = 'none';
+        document.getElementById('switchToPortuguese').style.display = 'block';
+      } else if (language === 'pt') {
+        // Definir texto em português
+        document.getElementById('pageTitle').textContent = 'Gráficos Dinâminos';
+        document.getElementById('pageDescription').textContent = 'Faça sua análise de maneira rápida e eficaz';
+        document.getElementById('quantidades').textContent = 'Quantidade:';
+        document.getElementById('quantidades2').textContent = 'Quantidade:';
+        document.getElementById('meses').textContent = 'Selecione o mês:';
+        document.getElementById('allmeses').textContent = 'Todos os meses';
+        // ~meses~
+
+        document.getElementById('mes1').textContent = 'Janeiro';
+        document.getElementById('mes2').textContent = 'Fervereiro';
+        document.getElementById('mes3').textContent = 'Março';
+        document.getElementById('mes4').textContent = 'Abril';
+        document.getElementById('mes5').textContent = 'Maio';
+        document.getElementById('mes6').textContent = 'Junho';
+        document.getElementById('mes7').textContent = 'Julho';
+        document.getElementById('mes8').textContent = 'Agosto';
+        document.getElementById('mes9').textContent = 'Setembro';
+        document.getElementById('mes10').textContent = 'Outubro';
+        document.getElementById('mes11').textContent = 'Novembro';
+        document.getElementById('mes12').textContent = 'Dezembro';
+
+
+        document.getElementById('tipos').textContent = 'Tipo de raio:';
+        document.getElementById('tipos2').textContent = 'Tipo de raio:';
+
+        document.getElementById('tipoRaio').textContent = 'IntraNuvem (Total)';
+        document.getElementById('tipoRaio2').textContent = 'Nuvem-Solo (Total)';
+
+
+        document.getElementById('btnMap').textContent = 'Voltar para o Mapa';
+
+
+
+        document.getElementById('switchToEnglish').style.display = 'block';
+        document.getElementById('switchToPortuguese').style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+
+
+
+</html>

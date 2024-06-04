@@ -1,0 +1,178 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.divisor{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%;
+    width: 100%;
+    gap:5px;
+}
+.qd1{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    max-width: 40%;
+    width: 27%;
+    height: 43.9rem;
+background: #F1F9FC;
+border-right: solid 3px #03A4FF;
+
+}
+.qd2{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    max-width: 73%;
+    width: 100%;
+}
+.textoInicial{
+    margin-top: 0.5rem;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    margin-left: 0.5rem;
+    padding: 9px;
+}
+.info-raio{
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    margin-left: 0.5rem;
+    padding: 9px;
+    gap: 12px;
+    margin-top: 1.2rem;
+}
+.informaçoes{
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+span{
+    margin-left: 1rem;
+}
+p{
+    margin-top: -0.2rem;
+}
+
+.language-buttons{
+    max-width: 100%;
+    width: 97%;
+
+    display: flex;
+    justify-content: space-around;
+    padding: 2px;
+    margin: 2px;
+}
+#switchToEnglish{
+    max-width: 19%;
+    width: 100%;
+    background: transparent;
+    border: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: 1s;
+    cursor: pointer;
+}
+#switchToEnglish:hover{
+    transform: scale(1.2);
+}
+#switchToPortuguese{
+    max-width: 19%;
+    width: 100%;
+    background: transparent;
+    border: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transition: 1s;
+    cursor: pointer;
+}
+#switchToPortuguese:hover{
+    transform: scale(1.1);
+   
+}
+
+.EuaImg{
+    max-width: 100%;
+    width: max-content;
+}
+.BrazilImg{
+    max-width:100%;
+    width: max-content;
+}
+
+.divImagem{
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    padding: 9px;
+    background: #DCEFFF;
+}
+.selecionador{
+    max-width: 100%;
+    width: 94%;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: start;
+    margin-left: 0.5rem;
+    padding: 9px;
+}
+.divQdr{
+    margin-top: 14.5rem;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+@media screen and (max-width: 1000px) {
+    .divisor {
+        max-width: 100%;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+    .qd1 {
+        max-width: 100%;
+        width: 90%;
+        height: 52rem;   
+    }
+    .qd2 {
+        margin-top: -40rem;
+        max-width: 100%;
+        width: 90%;
+    }
+    .divQdr{
+        position:relative;
+        margin-top: 28.7rem;
+    }
+    .language-buttons{
+        width: 40%;
+        margin-top: -3.7rem;
+        margin-left: 32rem;
+        position: absolute;
+        
+    }
+    .textoInicial{
+        margin-left: 1.7rem;
+    }
+    p{
+        margin-left: 1rem;
+    }
+}

@@ -1,0 +1,473 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family:'Gill Sans MT';
+
+}
+
+body {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+
+}
+.divisor{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%;
+    width: 100%;
+}
+.qd1{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    max-width: 40%;
+    width: 27%;
+    height: 44.2rem;
+    gap:0.8rem;
+    background: #F1F9FC;
+    border-right: solid 3px #03A4FF;
+}
+.qd2{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    max-width: 73%;
+    width: 100%;
+    height: 44.2rem;
+}
+
+.divImagem{
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    padding: 9px;
+    background: #DCEFFF;
+}
+.textoInicial{
+    margin-top: 0.5rem;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    margin-left: 0.5rem;
+    padding: 9px;
+}
+
+.language-buttons{
+    max-width: 100%;
+    width: 97%;
+
+    display: flex;
+    justify-content: space-around;
+    padding: 2px;
+    margin: 2px;
+}
+#switchToEnglish{
+    max-width: 19%;
+    width: 100%;
+    background: transparent;
+    border: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: 1s;
+    cursor: pointer;
+}
+#switchToEnglish:hover{
+    transform: scale(1.2);
+}
+#switchToPortuguese{
+    max-width: 19%;
+    width: 100%;
+    background: transparent;
+    border: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    transition: 1s;
+    cursor: pointer;
+}
+#switchToPortuguese:hover{
+    transform: scale(1.1);
+   
+}
+
+.EuaImg{
+    max-width: 100%;
+    width: max-content;
+}
+.BrazilImg{
+    max-width:100%;
+    width: max-content;
+}
+
+.divQdr{
+    margin-top: -0.5rem;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cabeçalho {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    max-width: 100%;
+    width: 100%;
+    text-align: justify;
+    margin-top: -1rem;
+
+  }
+
+
+.mapa {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.retangulo2{
+    display: flex;
+    flex-direction: column;
+    gap:2px;
+    justify-content: center;
+    align-items: center;
+    padding: 3px;
+    max-width: 70%;
+    border: 3px rgb(15, 14, 14) solid;
+    border-radius: 10px;
+    max-width: 100%;    
+    width:75%;
+}
+
+.inserir{
+    gap:4px;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.inserir2{
+    max-width: 100%;
+    width: 92%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    gap:15px;
+}
+.bt3{
+    max-width: 50%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: justify;
+    height: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 2s;
+}
+.bt3:hover{
+    border: solid 2px #92afc8;
+}
+.bt4{
+    max-width: 50%;
+    width: 100%;
+    height: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    outline: none;
+    background-color: #DCEFFF;
+    border: solid 2px #92afc8;
+    border-radius: 3px;
+    text-align: start;
+    cursor: pointer;
+ 
+}
+.enviar{
+    margin-top: 0.1rem;
+    margin-left: 20rem;
+}
+#btnCharts{
+    max-width: 100%;
+    width: 90%;
+    height: 30px;
+    font-size: 12.4px;
+    margin: 5px;
+    font-weight: 700;
+    outline: none;
+    border:none;
+    
+    border-radius: 5px;
+    cursor: pointer;
+    background: #03A4FF;
+    display: flex;
+    justify-content: center;
+    gap:1rem;
+    align-items: center;
+}
+h2 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    padding: 2px;
+    margin: 2px;
+    margin-top: -0.2rem;
+    font-weight: 800;
+}
+
+#map {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    height: 44.2rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.retanguloFiltro {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    width: 100%;
+    gap:10px;
+    margin-top: -0.5rem;
+    justify-content: center;
+    align-items: center;
+    transition: 1s;
+}
+
+.mesTipo {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.mes,
+.tipo {
+    max-width: 100%;
+    width: 100%;
+    gap:5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#month,
+#type {
+    max-width: 100%;
+    width: 92%;
+    height: 30px;
+    font-size: 16px;
+    outline: none;
+    background-color: #DCEFFF;
+    border: solid 2px #92afc8;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.porQuantidade {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    gap: 5px;
+    margin: 3px;
+    text-align: justify;
+    align-items: center;
+    flex-direction: column;
+}
+.subtitulos{
+    max-width: 100%;
+    width: 92%;
+}
+
+
+#quantity {
+    max-width: 100%;
+    width: 92%;
+    height: 30px;
+    font-size: 16px;
+    outline: none;
+    background-color: #DCEFFF;
+    border: solid 2px #92afc8;
+    color: #000000;
+    font-weight: 700;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.naTela {
+    max-width: 100%;
+    width: 100%;
+    gap:10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#resultCount,#maxCount{
+    font-size: 1.1rem;
+    max-width: 100%;
+    width: 92%;
+}
+
+.porData {
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.final,
+.inicial {
+    max-width: 100%;
+    width: 92%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    gap: 10px;
+    font-size: 16px;
+    outline: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#startDate,
+#endDate {
+    max-width: 100%;
+    width: 60%;
+    height: 30px;
+    font-size: 16px;
+    background-color: #DCEFFF;
+    border: solid 2px #92afc8;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.botoes {
+
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    flex-direction: row;
+}
+
+.bt1 {
+
+    max-width: 100%;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+
+}
+
+#btnFilter,
+#btnReset {
+    max-width: 100%;
+    width: 60%;
+    height: 30px;
+    font-size: 16px;
+    outline: none;
+    background-color: #DCEFFF;
+    border: solid 2px #92afc8;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+.hide-qd1 {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+/* Estilos para mostrar o botão em telas menores */
+@media screen and (max-width: 1000px) {
+    .divisor {
+        max-width: 100%;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 4rem;
+    }
+
+    .menu-button {
+        position: absolute;
+        text-align: center;
+        margin-left: 50rem;
+        z-index: 4;
+    }
+    .qd1 {
+        max-width: 100%;
+        width: 90%;
+        height: 40rem;
+    }
+    .qd1 {
+        z-index: 1;
+        max-height: 0;
+    }
+
+    .hide-qd1 {
+        max-height: 1000px;
+    }
+    .qd2 {
+    
+        z-index: 1;
+        max-width: 100%;
+        width: 90%;
+    }
+    .language-buttons{
+        width: 40%;
+        margin-top: -2.7rem;
+        margin-left: 25rem;
+        position: absolute;
+        
+    }
+    .textoInicial{
+        margin-left: 1.7rem;
+    }
+    p{
+        margin-left: 1rem;
+    }
+}

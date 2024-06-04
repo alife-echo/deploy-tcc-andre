@@ -1,0 +1,140 @@
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+
+const app = express();
+const port = 3002;
+
+const uri = 'mongodb+srv://andrejoas:meutcc@cluster0.taa4fgi.mongodb.net/';
+const dbName = 'dadosRaio';
+
+app.use(cors());
+
+// Rota para exibir a página index.html
+app.get('/', (req, res) => {
+  const indexPath = path.join(__dirname, 'index.html');
+  res.sendFile(indexPath);
+});
+
+// Rota para servir arquivos estáticos da pasta public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Função para importar um arquivo JSON para uma coleção específica no MongoDB
+async function importJSONToCollection(filePath, collectionName) {
+  try {
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await client.connect();
+
+    const db = client.db(dbName);
+
+    const jsonData = fs.readFileSync(filePath, 'utf8');
+    const data = JSON.parse(jsonData);
+    await db.collection(collectionName).insertMany(data);
+    console.log(`Arquivo ${filePath} importado para a coleção ${collectionName}`);
+
+    client.close();
+  } catch (err) {
+    console.error(`Erro ao importar arquivo ${filePath} para a coleção ${collectionName}:`, err);
+  }
+}
+
+// Importar arquivos JSON para a coleção "dadosRaio2023"
+async function importJSONFilesToMongoDB() {
+  const jsonFiles = [
+    { filePath: './dadosJaneiro.json', collectionName: 'dadosRaio2023' },
+    // { filePath: './dadosFevereiro.json', collectionName: 'dadosRaio2023' },
+    // { filePath: './dadosMarco.json', collectionName: 'dadosRaio2023' },
+  ];
+
+  try {
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await client.connect();
+
+    const db = client.db(dbName);
+
+    const collectionExists = await db.collection('dadosRaio2023').countDocuments() > 0;
+
+    if (!collectionExists) {
+      for (const file of jsonFiles) {
+        const jsonData = fs.readFileSync(file.filePath, 'utf8');
+        const data = JSON.parse(jsonData);
+        await db.collection(file.collectionName).insertMany(data);
+        console.log(`Arquivo ${file.filePath} importado para a coleção ${file.collectionName}`);
+      }
+    } else {
+      console.log('A coleção "dadosRaio2023" já contém documentos. Nenhum arquivo importado.');
+    }
+
+    client.close();
+  } catch (err) {
+    console.error('Erro ao importar arquivos JSON:', err);
+  }
+}
+
+let dataCache = []; // Lista para armazenar os dados do banco de dados
+
+// Função para carregar os dados do banco de dados na lista de cache
+async function loadDataCache() {
+  try {
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await client.connect();
+
+    const db = client.db(dbName);
+    dataCache = await db.collection('dadosRaio2023').find().toArray();
+
+    client.close();
+  } catch (err) {
+    console.error('Erro ao carregar os dados do banco de dados:', err);
+  }
+}
+
+// Rota para consultar os dados da coleção "dadosRaio2023"
+app.get('/api', (req, res) => {
+  const { month, quantity, type, time } = req.query; // Obter os filtros da query string
+
+  let filteredData = [...dataCache]; // Criar uma cópia dos dados do cache
+
+  // Aplicar filtros na lista de dados
+  if (month) {
+    filteredData = filteredData.filter(item => item.month === parseInt(month));
+  }
+  if (quantity) {
+    filteredData = filteredData.filter(item => item.quantity === parseInt(quantity));
+  }
+  if (type) {
+    filteredData = filteredData.filter(item => item.type === parseInt(type));
+  }
+  if (time) {
+    filteredData = filteredData.filter(item => item.time_utc.getTime() === new Date(time).getTime());
+  }
+
+  const projection = { _id: 0, type: 1, latitude: 1, longitude: 1, time_utc: 1 };
+
+  // Aplicar projeção nos dados filtrados
+  const projectedData = filteredData.map(item => {
+    const projectedItem = {};
+    for (const prop in projection) {
+      if (projection[prop]) {
+        projectedItem[prop] = item[prop];
+      }
+    }
+    return projectedItem;
+  });
+
+  res.json(projectedData);
+});
+
+// Iniciar o servidor
+async function startServer() {
+  await importJSONFilesToMongoDB();
+  await loadDataCache();
+  app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}/`);
+  });
+}
+
+startServer();
+
+

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>LIGHTNING MAB</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            max-width: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family:'Gill Sans MT';
+        }
+        #retangulo{
+            padding: 5px;
+            position: absolute;
+            max-width: 70%;
+            border: 3px rgb(15, 14, 14) solid;
+            border-radius: 10px;
+            margin-top: 34%;
+            width: 40%;
+            height: 50%;
+        }
+        .textos{
+            max-width: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap:1rem;
+        }
+        h2{
+            font-size: 2.1rem;
+        }
+        h3{
+            font-size: 1.7rem;
+        }
+        p{
+            padding: 4px;
+            font-size: 1.2rem;
+        }
+        .retBotao{
+            padding: 3px;
+            margin: 3px;
+            max-width: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5rem;
+            color:#fff;
+        }
+        #botao{
+            font-family:'Gill Sans MT';
+            font-weight: 700;
+            max-width: 100%;
+            width: 20%;
+            height: 2rem;
+            border-radius: 10px;
+            border: none;
+            background: black;
+            color:#fff;
+        }
+        a{
+            text-decoration: none;
+            color:#fff;
+            font-size: 1rem;
+        }
+        
+        .tempo{
+            
+            margin-left: 80%;
+            margin-top: 2rem;
+            width: 10%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+            color:#fff;
+            gap:2rem;
+        }
+        
+        #tempestade, #limpo{
+            font-family:'Gill Sans MT';
+            max-width: 100%;
+            width: 80%;
+            border: none;
+            border-radius: 6px;
+            height: 1.5rem;
+        }
+        
+        #tempestade{
+            background: rgb(233, 228, 228);
+            font-weight: 700;
+        
+        }
+        #limpo{
+            background: rgb(233, 228, 228);
+            font-weight: 700;
+        }
+
+        @media screen and (max-width: 900px) {
+            #retangulo{
+                margin-top:20rem;
+                max-width: 100%;
+
+                width: 73%;
+            }
+            #tempestade,#limpo{
+                width: 100%;
+              
+            }
+            .tempo{
+                margin-left: 90%;
+                width: 12%;
+                height: 20px;
+            }
+        }
+        @media screen and (max-width: 740px) {
+            #retangulo{
+             
+                max-width: 100%;
+                width: 68%;
+            }
+            #tempestade,#limpo{
+                width: 100%;
+              
+            }
+            .tempo{
+                margin-left: 85%;
+                width: 15%;
+                height: 70px;
+            }
+        }
+        @media screen and (max-width: 500px) {
+            #retangulo{
+                max-width: 100%;
+                width: 70%;
+            }
+            .tempo{
+                margin-left: 85%;
+                width: 15%;
+                height: 70px;
+            }
+            #tempestade,#limpo{
+                width: 100%;
+              
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="relampago">
+        <div class="relampago-flash"></div>
+    </div>
+    <div id="retangulo" style="position:absolute">
+        <div class="textos">
+            <h2>LIGHTNING MAB</h2>
+            <h3>Bem vindo</h3>
+            <p>Aqui você terá a experiência de ver com exatidão a localidade da ocorrência de raios no estado do Pará
+            </p>
+        </div>
+
+
+        <div class="retBotao">
+            <button id="botao"><a href="./public/mapa.html">Ver mapa</a></button>
+        </div>
+
+
+    </div>
+    <div class="tempo">
+        <button type="button" id="tempestade" onclick="mudar()">Dark Mode</button>
+        <button type="button" id="limpo" onclick="mudar2()">Light Mode</button>
+    </div>
+       
+</body>
+
+
+<script>
+       var heatLayer;
+        document.getElementById('botao').addEventListener('click', function () {
+            window.location.href = './public/mapa.html'; 
+            // quando rodar em http://localhost:3002/ mudar para mapa.html
+            // subir no guit pager ./public/mapa.html
+        });
+
+</script>
+<script>
+    var corpo = document.body;
+    var corpo2 = document.getElementById("retangulo");
+
+    var bt1 = document.getElementById("tempestade")
+    var bt2 = document.getElementById("limpo")
+
+    var bt3 = document.getElementById("botao")
+    
+    function mudar(){
+        corpo.style="background:#000000";
+        corpo2.style="color:#fff";
+        bt1.style="background:#fff";
+        bt3.style="border: solid 2px #fff";
+    
+    }
+    function mudar2(){
+        corpo.style="background:#fff";
+        corpo2.style="color:#000000";
+        bt1.style="background: rgb(233, 228, 228)";
+    }
+</script>
+</html>
