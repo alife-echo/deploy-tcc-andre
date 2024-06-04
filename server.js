@@ -16,8 +16,7 @@ app.use(cors());
 
 // Rota para exibir a página index.html
 app.get('/', (req, res) => {
-  const indexPath = path.join(__dirname, 'index.html');
-  res.sendFile(indexPath);
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Rota para lidar com o upload de arquivos JSON
