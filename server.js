@@ -7,8 +7,9 @@ const upload = multer(); // Configuração padrão do multer para upload de arqu
 
 const app = express();
 const port = 3002;
-
-const uri = 'mongodb+srv://andrejoas:meutcc@cluster0.taa4fgi.mongodb.net/';
+//mongodb+srv://root:<password>@cluster0.0ebvcl5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+//mongodb+srv://andrejoas:meutcc@cluster0.taa4fgi.mongodb.net/
+const uri = "mongodb+srv://testsap:GB82Z3EfXg2tfyhH@cluster0.aiw6hoa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const dbName = 'dadosRaio';
 
 app.use(cors());
