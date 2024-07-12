@@ -471,3 +471,22 @@ h2 {
         margin-left: 1rem;
     }
 }
+.json_baixar_arquivos{
+    max-width: 100%;
+    width: 100%;
+    margin-left: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+}
+.json_baixar_arquivos ul{
+    list-style-type: none;
+    
+}
+.json_baixar_arquivos ul li{
+    margin-top: 0.2rem;
+    text-decoration: none;
+    color: #000000;text-decoration: none;
+    color: #000000;
+}
